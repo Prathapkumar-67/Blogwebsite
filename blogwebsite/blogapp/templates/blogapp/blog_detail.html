@@ -1,0 +1,149 @@
+{% extends 'blogapp/base.html' %}
+
+{% block title %}{{ post.title }} - BlogWebsite{% endblock %}
+
+{% block additional_styles %}
+    <style>
+        .blog-detail-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        
+        .blog-header {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .blog-title {
+            font-size: 2.5em;
+            color: #1f2937;
+            margin: 0 0 16px 0;
+            line-height: 1.2;
+        }
+        
+        .blog-meta {
+            color: #6b7280;
+            font-size: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .blog-image {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            border-radius: 8px;
+            margin: 24px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .blog-content {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #374151;
+            margin-bottom: 32px;
+        }
+        
+        .blog-content p {
+            margin-bottom: 16px;
+        }
+        
+        .back-btn {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.2s;
+        }
+        
+        .back-btn:hover {
+            background: #4b5563;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .category-badge {
+            background: #3b82f6;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .author-info {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 32px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .author-info h4 {
+            margin: 0 0 8px 0;
+            color: #1f2937;
+        }
+        
+        .author-info p {
+            margin: 0;
+            color: #6b7280;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="blog-detail-container">
+        <div class="blog-header">
+            <h1 class="blog-title">{{ post.title }}</h1>
+            <div class="blog-meta">
+                <div class="meta-item">
+                    <strong>Category:</strong>
+                    <span class="category-badge">{{ post.category }}</span>
+                </div>
+                <div class="meta-item">
+                    <strong>Published:</strong>
+                    <span>{{ post.created_at|date:"F d, Y" }}</span>
+                </div>
+                {% if post.updated_at != post.created_at %}
+                    <div class="meta-item">
+                        <strong>Updated:</strong>
+                        <span>{{ post.updated_at|date:"F d, Y" }}</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if post.images %}
+            <img src="{{ post.images.url }}" alt="{{ post.title }}" class="blog-image">
+        {% endif %}
+        
+        <div class="blog-content">
+            {{ post.content|linebreaks }}
+        </div>
+        
+        <div class="author-info">
+            <h4>About the Author</h4>
+            <p><strong>{{ post.author.get_full_name|default:post.author.username }}</strong></p>
+            <p>Published on {{ post.created_at|date:"F d, Y" }}</p>
+        </div>
+        
+        <a href="{% url 'my_blogs' %}" class="back-btn">← Back to My Blogs</a>
+    </div>
+{% endblock %}

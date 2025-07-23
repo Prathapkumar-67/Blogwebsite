@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - BlogWebsite</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        header { background: #222; color: #fff; display: flex; align-items: center; padding: 16px 32px; position: relative; }
+        .site-name { font-size: 1.5em; font-weight: bold; margin-right: 40px; }
+        .nav-buttons { display: flex; gap: 40px; position: static; margin-left: 200px; }
+        .nav-buttons a { color: #fff; text-decoration: none; background: #444; padding: 8px 18px; border-radius: 4px; transition: background 0.2s; }
+        .nav-buttons a:hover { background: #666; }
+        .settings-section {
+            max-width: 800px;
+            margin: 40px auto;
+            background: rgba(255,255,255,0.95);
+            padding: 48px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+        }
+        .settings-section h2 {
+            margin-top: 0;
+            color: #1f2937;
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .settings-form { display: flex; flex-direction: column; gap: 18px; }
+        .settings-form label { font-weight: 500; margin-bottom: 4px; }
+        .settings-form input[type="text"],
+        .settings-form input[type="email"],
+        .settings-form input[type="password"],
+        .settings-form input[type="tel"] {
+            padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em;
+        }
+        .settings-form button[type="submit"] {
+            background: #007bff; color: #fff; border: none; padding: 10px 0; border-radius: 4px; font-size: 1em; cursor: pointer; transition: background 0.2s;
+        }
+        .settings-form button[type="submit"]:hover { background: #0056b3; }
+        .delete-account-btn {
+            background: #dc3545; color: #fff; border: none; padding: 10px 0; border-radius: 4px; font-size: 1em; cursor: pointer; margin-top: 18px; transition: background 0.2s;
+        }
+        .delete-account-btn:hover { background: #a71d2a; }
+        .edit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        .save-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+        }
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+        .cancel-btn {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+            margin-left: 12px;
+        }
+        .cancel-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(107, 114, 128, 0.3);
+        }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal { background: white; padding: 24px; border-radius: 8px; max-width: 400px; text-align: center; }
+        .modal h3 { margin-top: 0; }
+        .modal-buttons { display: flex; justify-content: center; gap: 16px; margin-top: 24px; }
+        .modal-confirm { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+        .modal-cancel { background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+        .success-message { background: #d4edda; color: #155724; padding: 10px; border-radius: 4px; margin-bottom: 16px; display: none; }
+        .error-message { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px; margin-bottom: 16px; display: none; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="site-name">blogwebsite</div>
+        <nav class="nav-buttons">
+            <a href="/">Home</a>
+            <a href="/my-blogs">My Blogs</a>
+            <a href="/aboutus">About Us</a>
+            <a href="/settings">Settings</a>
+            <a href="#" id="logout-btn">Logout</a>
+        </nav>
+    </header>
+    <div class="settings-section">
+        <div class="success-message" id="success-message"></div>
+        <div class="error-message" id="error-message"></div>
+        <h2>Edit Your Details</h2>
+        <form class="settings-form" id="settings-form">
+            {% csrf_token %}
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <label for="name" style="min-width: 70px;">Name</label>
+                <span id="display-name">{{ request.user.username }}</span>
+                <input type="text" id="input-name" name="name" value="{{ request.user.username }}" style="display: none;">
+                <div class="action-buttons">
+                    <button type="button" class="edit-btn" data-field="name">Edit</button>
+                    <button type="button" class="save-btn" data-field="name">Save</button>
+                    <button type="button" class="cancel-btn" data-field="name">Cancel</button>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <label for="email" style="min-width: 70px;">Email</label>
+                <span id="display-email">{{ request.user.email }}</span>
+                <input type="email" id="input-email" name="email" value="{{ request.user.email }}" style="display: none;">
+                <div class="action-buttons">
+                    <button type="button" class="edit-btn" data-field="email">Edit</button>
+                    <button type="button" class="save-btn" data-field="email">Save</button>
+                    <button type="button" class="cancel-btn" data-field="email">Cancel</button>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <label for="phone" style="min-width: 70px;">Phone</label>
+                <span id="display-phone">{{ request.user.mobile }}</span>
+                <input type="tel" id="input-phone" name="phone" value="{{ request.user.mobile }}" style="display: none;">
+                <div class="action-buttons">
+                    <button type="button" class="edit-btn" data-field="phone">Edit</button>
+                    <button type="button" class="save-btn" data-field="phone">Save</button>
+                    <button type="button" class="cancel-btn" data-field="phone">Cancel</button>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <label for="password" style="min-width: 70px;">Password</label>
+                <span id="display-password">********</span>
+                <div id="password-inputs" style="display: none; flex-direction: column; gap: 8px; flex: 1;">
+                    <input type="password" id="input-password" name="password" placeholder="New password" style="margin-bottom: 8px;">
+                    <input type="password" id="input-password-confirm" name="password_confirm" placeholder="Confirm new password">
+                </div>
+                <div class="action-buttons">
+                    <button type="button" class="edit-btn" data-field="password">Edit</button>
+                    <button type="button" class="save-btn" data-field="password">Save</button>
+                    <button type="button" class="cancel-btn" data-field="password">Cancel</button>
+                </div>
+            </div>
+        </form>
+        <button class="delete-account-btn" id="delete-account-btn">Delete Account</button>
+    </div>
+
+    <!-- Delete Account Confirmation Modal -->
+    <div class="modal-overlay" id="delete-modal">
+        <div class="modal">
+            <h3>Delete Account</h3>
+            <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+            <div class="modal-buttons">
+                <button class="modal-confirm" id="confirm-delete">Yes, Delete</button>
+                <button class="modal-cancel" id="cancel-delete">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logout-modal">
+        <div class="modal">
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to logout from your account?</p>
+            <div class="modal-buttons">
+                <button class="modal-confirm" id="confirm-logout">Yes, Logout</button>
+                <button class="modal-cancel" id="cancel-logout">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Edit buttons functionality
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const field = this.getAttribute('data-field');
+                const displayElement = document.getElementById(`display-${field}`);
+                const saveButton = document.querySelector(`.save-btn[data-field="${field}"]`);
+                const cancelButton = document.querySelector(`.cancel-btn[data-field="${field}"]`);
+                
+                // Hide display
+                displayElement.style.display = 'none';
+                
+                // Special handling for password field
+                if (field === 'password') {
+                    const passwordInputs = document.getElementById('password-inputs');
+                    passwordInputs.style.display = 'flex';
+                    document.getElementById('input-password').focus();
+                } else {
+                    // For other fields
+                    const inputElement = document.getElementById(`input-${field}`);
+                    inputElement.style.display = 'block';
+                    inputElement.focus();
+                }
+                
+                // Hide edit button, show save and cancel buttons
+                this.style.display = 'none';
+                saveButton.style.display = 'inline-block';
+                cancelButton.style.display = 'inline-block';
+            });
+        });
+        
+        // Cancel buttons functionality
+        document.querySelectorAll('.cancel-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const field = this.getAttribute('data-field');
+                const displayElement = document.getElementById(`display-${field}`);
+                const editButton = document.querySelector(`.edit-btn[data-field="${field}"]`);
+                const saveButton = document.querySelector(`.save-btn[data-field="${field}"]`);
+                
+                // Special handling for password field
+                if (field === 'password') {
+                    const passwordInputs = document.getElementById('password-inputs');
+                    passwordInputs.style.display = 'none';
+                    document.getElementById('input-password').value = '';
+                    document.getElementById('input-password-confirm').value = '';
+                } else {
+                    // For other fields
+                    const inputElement = document.getElementById(`input-${field}`);
+                    inputElement.value = displayElement.textContent;
+                    inputElement.style.display = 'none';
+                }
+                
+                // Show display
+                displayElement.style.display = 'inline';
+                
+                // Show edit button, hide save and cancel buttons
+                editButton.style.display = 'inline-block';
+                saveButton.style.display = 'none';
+                this.style.display = 'none';
+            });
+        });
+        
+        // Save buttons functionality
+        document.querySelectorAll('.save-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const field = this.getAttribute('data-field');
+                let value;
+                
+                // Special handling for password field
+                if (field === 'password') {
+                    const password = document.getElementById('input-password').value.trim();
+                    const confirmPassword = document.getElementById('input-password-confirm').value.trim();
+                    
+                    // Validate passwords
+                    if (!password) {
+                        showError('Password cannot be empty');
+                        return;
+                    }
+                    
+                    if (password !== confirmPassword) {
+                        showError('Passwords do not match');
+                        return;
+                    }
+                    
+                    value = password;
+                } else {
+                    // For other fields
+                    const inputElement = document.getElementById(`input-${field}`);
+                    value = inputElement.value.trim();
+                    
+                    // Validate input
+                    if (!value) {
+                        showError(`${field.charAt(0).toUpperCase() + field.slice(1)} cannot be empty`);
+                        return;
+                    }
+                }
+                
+                // Send AJAX request to update the field
+                const formData = new FormData();
+                formData.append('field', field);
+                formData.append('value', value);
+                formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+                
+                fetch('/update_profile/', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update display value
+                        if (field !== 'password') {
+                            document.getElementById(`display-${field}`).textContent = value;
+                        }
+                        
+                        // Reset UI
+                        const displayElement = document.getElementById(`display-${field}`);
+                        const editButton = document.querySelector(`.edit-btn[data-field="${field}"]`);
+                        const cancelButton = document.querySelector(`.cancel-btn[data-field="${field}"]`);
+                        
+                        displayElement.style.display = 'inline';
+                        
+                        // Special handling for password field
+                        if (field === 'password') {
+                            const passwordInputs = document.getElementById('password-inputs');
+                            passwordInputs.style.display = 'none';
+                            document.getElementById('input-password').value = '';
+                            document.getElementById('input-password-confirm').value = '';
+                        } else {
+                            // For other fields
+                            const inputElement = document.getElementById(`input-${field}`);
+                            inputElement.style.display = 'none';
+                        }
+                        
+                        editButton.style.display = 'inline-block';
+                        this.style.display = 'none';
+                        cancelButton.style.display = 'none';
+                        
+                        showSuccess(data.message);
+                    } else {
+                        showError(data.message);
+                    }
+                })
+                .catch(error => {
+                    showError('An error occurred. Please try again.');
+                    console.error('Error:', error);
+                });
+            });
+        });
+        
+        // Delete account functionality
+        const deleteBtn = document.getElementById('delete-account-btn');
+        const deleteModal = document.getElementById('delete-modal');
+        const confirmDeleteBtn = document.getElementById('confirm-delete');
+        const cancelDeleteBtn = document.getElementById('cancel-delete');
+        
+        deleteBtn.addEventListener('click', function() {
+            deleteModal.style.display = 'flex';
+        });
+        
+        cancelDeleteBtn.addEventListener('click', function() {
+            deleteModal.style.display = 'none';
+        });
+        
+        confirmDeleteBtn.addEventListener('click', function() {
+            // Send AJAX request to delete account
+            const formData = new FormData();
+            formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+            
+            fetch('/delete_account/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Redirect to login page
+                    window.location.href = '/login';
+                } else {
+                    deleteModal.style.display = 'none';
+                    showError(data.message);
+                }
+            })
+            .catch(error => {
+                deleteModal.style.display = 'none';
+                showError('An error occurred. Please try again.');
+                console.error('Error:', error);
+            });
+        });
+        
+        // Helper functions for showing messages
+        function showSuccess(message) {
+            const successElement = document.getElementById('success-message');
+            successElement.textContent = message;
+            successElement.style.display = 'block';
+            setTimeout(() => {
+                successElement.style.display = 'none';
+            }, 3000);
+        }
+        
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 3000);
+        }
+
+        // Logout confirmation functionality
+        const logoutBtn = document.getElementById('logout-btn');
+        const logoutModal = document.getElementById('logout-modal');
+        const confirmLogoutBtn = document.getElementById('confirm-logout');
+        const cancelLogoutBtn = document.getElementById('cancel-logout');
+
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            logoutModal.style.display = 'flex';
+        });
+
+        cancelLogoutBtn.addEventListener('click', function() {
+            logoutModal.style.display = 'none';
+        });
+
+        confirmLogoutBtn.addEventListener('click', function() {
+            window.location.href = '/logout';
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target === deleteModal) {
+                deleteModal.style.display = 'none';
+            }
+            if (e.target === logoutModal) {
+                logoutModal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

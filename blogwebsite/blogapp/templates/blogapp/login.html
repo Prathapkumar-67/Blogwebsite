@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BlogWebsite</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .site-name {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: white;
+            text-align: center;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .login-form {
+            background: rgba(255,255,255,0.95);
+            padding: 48px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            min-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .login-form h2 {
+            text-align: center;
+            margin: 0 0 20px 0;
+            color: #1f2937;
+            font-size: 2em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .login-form label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+            font-size: 16px;
+        }
+        .login-form input[type="email"],
+        .login-form input[type="password"] {
+            padding: 16px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.9);
+            box-sizing: border-box;
+        }
+        .login-form input[type="email"]:focus,
+        .login-form input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+        .login-form button[type="submit"] {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 16px 0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        .login-form button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        .login-form .forgot-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .login-form .forgot-link:hover {
+            text-decoration: underline;
+        }
+        .login-form .signup-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 16px 0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        .login-form .signup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+        .error-message {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            padding: 12px 16px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 16px;
+            border: 1px solid #f5c6cb;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="site-name">blogwebsite</div>
+        <form class="login-form" method="post">
+            {% csrf_token %}
+            <h2>Welcome Back</h2>
+            {% if error %}
+                <div class="error-message">{{ error }}</div>
+            {% endif %}
+            <div>
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit">Sign In</button>
+            <a href="/forgot-password" class="forgot-link">Forgot your password?</a>
+            <button type="button" class="signup-btn" onclick="window.location.href='/signup'">Create New Account</button>
+        </form>
+    </div>
+</body>
+</html>
