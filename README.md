@@ -416,31 +416,9 @@ CREATE TABLE blogapp_post (
 
 ---
 
-## 👥 User Credentials
 
-### Administrator Account
-- **Username**: `admin`
-- **Email**: `admin@blogwebsite.com`
-- **Password**: `Blogwebsite@12`
-- **Access**: Full admin panel access
 
-### Regular User Accounts
-All regular users have the password: `BlogUser@123`
 
-1. **john_doe** - john.doe@email.com
-2. **jane_smith** - jane.smith@email.com
-3. **mike_johnson** - mike.johnson@email.com
-4. **sarah_wilson** - sarah.wilson@email.com
-5. **david_brown** - david.brown@email.com
-6. **emily_davis** - emily.davis@email.com
-7. **alex_miller** - alex.miller@email.com
-8. **lisa_garcia** - lisa.garcia@email.com
-9. **tom_anderson** - tom.anderson@email.com
-10. **anna_taylor** - anna.taylor@email.com
-
-*Complete credentials available in `user_credentials.txt`*
-
----
 
 ## 📝 License
 
